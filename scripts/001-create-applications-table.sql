@@ -1,4 +1,4 @@
--- Create applications table for SpeedUp nominations
+-- Create applications table for FounderSmith nominations
 CREATE TABLE IF NOT EXISTS applications (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   full_name TEXT NOT NULL,
