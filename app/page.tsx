@@ -204,7 +204,7 @@ export default function FounderSmithPage() {
       const scrolledDistance = startTrigger - containerTop
 
       let progress = scrolledDistance / totalScrollDistance
-      
+
       // Clamp progress between 0 and 1
       progress = Math.max(0, Math.min(1, progress))
 
@@ -289,7 +289,7 @@ export default function FounderSmithPage() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
             <img
-              src={isDarkMode ? "/foundersmith-logo-dark.png" : "/foundersmith-logo.png"}
+              src={isDarkMode ? "/foundersmith-logo-dark.svg" : "/foundersmith-logo.svg"}
               alt="FounderSmith"
               className={cn(
                 "object-contain",
@@ -353,90 +353,59 @@ export default function FounderSmithPage() {
           </p>
 
           <div className="relative" ref={timelineContainerRef}>
-            {/* Vertical line - static background */}
-            <div className="absolute left-[27px] top-0 h-full w-0.5 bg-border md:left-[31px]" />
 
-            {/* Progress bar - hidden but still used for calculations */}
-            <div
-              ref={timelineRef}
-              className="absolute left-[27px] top-0 w-0.5 opacity-0 pointer-events-none md:left-[31px]"
-              style={{ height: `${timelineProgress * 100}%` }}
-            />
 
             <div className="space-y-8">
               {timelineSteps.map((step, index) => {
                 const Icon = step.icon
-                const isLast = index === timelineSteps.length - 1
-                const stepProgress = index / (timelineSteps.length - 1)
-                const nextStepProgress = isLast ? 1 : (index + 1) / (timelineSteps.length - 1)
-                
-                // Calculate glow intensity based on scroll progress
-                // Only the current step being scrolled through should glow
-                const isCurrent = isLast 
-                  ? timelineProgress >= stepProgress && timelineProgress <= 1
-                  : timelineProgress >= stepProgress && timelineProgress < nextStepProgress
-                
-                // Calculate glow intensity (0 to 1) for smooth transitions
-                let glowIntensity = 0
-                if (isCurrent) {
-                  // When scrolling through this step, glow intensity increases smoothly
-                  const stepRange = nextStepProgress - stepProgress
-                  if (stepRange > 0) {
-                    const progressInStep = (timelineProgress - stepProgress) / stepRange
-                    // Smooth glow that reaches full intensity
-                    glowIntensity = Math.min(1, Math.max(0, progressInStep * 1.2))
-                  } else if (isLast) {
-                    // For the last step, glow when progress reaches it
-                    glowIntensity = timelineProgress >= stepProgress ? 1 : 0
-                  }
-                }
+
+                // Calculate if this step should be active based on scroll progress
+                // We divide the progress (0-1) into segments for each step
+                const stepThreshold = index / (timelineSteps.length - 0.5)
+
+                // A step is active if the global progress has passed its threshold
+                // buffer ensures smooth transition
+                const isActive = timelineProgress >= stepThreshold
+
+                // Specific calculation for the first step to ensure it lights up immediately
+                const isFirst = index === 0;
 
                 return (
                   <div key={step.day} className="relative flex gap-6">
                     <div
-                      className={`relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border transition-all duration-500 ease-out ${
-                        glowIntensity > 0.3
+                      className={`relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border transition-all duration-500 ease-out ${isActive
                           ? "border-[#b10dc9] bg-[#b10dc9] scale-110"
-                          : glowIntensity > 0
-                          ? "border-[#b10dc9] bg-[#b10dc9]/60 scale-105"
                           : "border-[#b10dc9]/30 bg-[#b10dc9]/10"
-                      }`}
+                        }`}
                       style={{
-                        boxShadow: glowIntensity > 0
-                          ? `0 0 ${15 + glowIntensity * 35}px rgba(177, 13, 201, ${0.5 + glowIntensity * 0.5}), 0 0 ${8 + glowIntensity * 25}px rgba(177, 13, 201, ${0.7 + glowIntensity * 0.3}), 0 0 ${4 + glowIntensity * 12}px rgba(177, 13, 201, 0.9)`
+                        boxShadow: isActive
+                          ? `0 0 30px rgba(177, 13, 201, 0.6), 0 0 15px rgba(177, 13, 201, 0.4)`
                           : 'none',
-                        transition: 'all 0.5s ease-out'
                       }}
                     >
                       <Icon
-                        className={`h-6 w-6 transition-all duration-500 ${
-                          glowIntensity > 0.3 ? "text-white scale-110" : glowIntensity > 0 ? "text-white" : "text-[#b10dc9]/60"
-                        }`}
+                        className={`h-6 w-6 transition-all duration-500 ${isActive ? "text-white scale-110" : "text-[#b10dc9]/60"
+                          }`}
                         style={{
-                          filter: glowIntensity > 0 ? `drop-shadow(0 0 ${3 + glowIntensity * 8}px rgba(255, 255, 255, ${0.6 + glowIntensity * 0.4}))` : 'none'
+                          filter: isActive ? `drop-shadow(0 0 5px rgba(255, 255, 255, 0.8))` : 'none'
                         }}
                       />
                     </div>
                     <div className="pt-2">
-                      <span className={`mb-1 inline-block rounded px-2 py-0.5 text-xs transition-colors duration-500 ${
-                        glowIntensity > 0.3 ? "bg-[#b10dc9]/20 text-[#b10dc9]" : "bg-secondary text-muted-foreground"
-                      }`}>
+                      <span className={`mb-1 inline-block rounded px-2 py-0.5 text-xs transition-colors duration-500 ${isActive ? "bg-[#b10dc9]/20 text-[#b10dc9]" : "bg-secondary text-muted-foreground"
+                        }`}>
                         {step.day}
                       </span>
                       <h3
-                        className={`text-lg font-semibold transition-all duration-500 ${
-                          glowIntensity > 0.3
-                            ? "text-foreground scale-105" 
-                            : glowIntensity > 0
-                            ? "text-foreground" 
+                        className={`text-lg font-semibold transition-all duration-500 ${isActive
+                            ? "text-foreground scale-105"
                             : "text-muted-foreground"
-                        }`}
+                          }`}
                       >
                         {step.title}
                       </h3>
-                      <p className={`text-sm transition-colors duration-500 ${
-                        glowIntensity > 0.3 ? "text-foreground/80" : "text-muted-foreground"
-                      }`}>
+                      <p className={`text-sm transition-colors duration-500 ${isActive ? "text-foreground/80" : "text-muted-foreground"
+                        }`}>
                         {step.description}
                       </p>
                     </div>
@@ -784,7 +753,7 @@ export default function FounderSmithPage() {
               <div>
                 <h3 className="font-semibold mb-1">Email</h3>
                 <a href="mailto:hello@foundersmith.in" className="text-muted-foreground hover:text-foreground">
-                    business@foundersmith.in
+                  business@foundersmith.in
                 </a>
               </div>
             </div>
@@ -794,7 +763,7 @@ export default function FounderSmithPage() {
               <div>
                 <h3 className="font-semibold mb-1">Phone</h3>
                 <a href="tel:+919876543210" className="text-muted-foreground hover:text-foreground">
-                    +91 8017421072 / +91 7060593172
+                  +91 8017421072 / +91 7060593172
                 </a>
               </div>
             </div>
