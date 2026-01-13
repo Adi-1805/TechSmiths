@@ -165,7 +165,7 @@ export default function FounderSmithPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState("")
-  const [isDarkMode, setIsDarkMode] = useState(true)
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   const [timelineProgress, setTimelineProgress] = useState(0)
   const timelineRef = useRef<HTMLDivElement>(null)
@@ -299,13 +299,13 @@ export default function FounderSmithPage() {
             {/* </CHANGE> */}
           </a>
           <div className="flex items-center gap-3">
-            <button
+            {/* <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background transition-colors hover:bg-muted"
               aria-label="Toggle dark mode"
             >
               {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </button>
+            </button> */}
             {/* <Button onClick={scrollToForm} className="rounded-full bg-[#78038a] px-6 text-white hover:bg-[#9b0baf]">
               Apply Now
             </Button> */}
@@ -321,11 +321,13 @@ export default function FounderSmithPage() {
             <span className="h-2 w-2 animate-pulse rounded-full bg-[#78038a]" />
             Coming Soon
           </div>
-          <h1 className="mb-4 text-5xl font-bold leading-tight text-[#78038a] md:text-7xl">Aarambh 1.0</h1>
+          <h1 className="mb-4 text-5xl font-bold leading-tight text-[#78038a] md:text-7xl font-[family-name:var(--font-playfair)]">
+            Aarambh <span className="text-[1.15em]">1.0</span>
+          </h1>
           <h2 className="mb-4 text-2xl font-semibold leading-tight md:text-3xl">
             {"India's First "}
             <span className="text-[#78038a]">Execution-Based</span>
-            {" Startup Event"}
+            {" Startup Event for Students"}
           </h2>
           <p className="mb-2 text-base text-muted-foreground">
             {"Let's take your idea to a "}
