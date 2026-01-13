@@ -27,7 +27,7 @@ import {
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 
-const BRAND_COLOR = "#b10dc9"
+const BRAND_COLOR = "#78038a"
 
 const timelineSteps = [
   {
@@ -306,7 +306,7 @@ export default function FounderSmithPage() {
             >
               {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
-            {/* <Button onClick={scrollToForm} className="rounded-full bg-[#b10dc9] px-6 text-white hover:bg-[#9b0baf]">
+            {/* <Button onClick={scrollToForm} className="rounded-full bg-[#78038a] px-6 text-white hover:bg-[#9b0baf]">
               Apply Now
             </Button> */}
           </div>
@@ -315,16 +315,16 @@ export default function FounderSmithPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden px-6 py-24 text-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#b10dc9]/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#78038a]/10 via-transparent to-transparent" />
         <div className="relative mx-auto max-w-4xl">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#b10dc9]/30 bg-[#b10dc9]/10 px-4 py-2 text-sm text-[#b10dc9]">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-[#b10dc9]" />
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#78038a]/30 bg-[#78038a]/10 px-4 py-2 text-sm text-[#78038a]">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-[#78038a]" />
             Coming Soon
           </div>
-          <h1 className="mb-4 text-5xl font-bold leading-tight text-[#b10dc9] md:text-7xl">Aarambh 1.0</h1>
+          <h1 className="mb-4 text-5xl font-bold leading-tight text-[#78038a] md:text-7xl">Aarambh 1.0</h1>
           <h2 className="mb-4 text-2xl font-semibold leading-tight md:text-3xl">
             {"India's First "}
-            <span className="text-[#b10dc9]">Execution-Based</span>
+            <span className="text-[#78038a]">Execution-Based</span>
             {" Startup Event"}
           </h2>
           <p className="mb-2 text-base text-muted-foreground">
@@ -337,7 +337,7 @@ export default function FounderSmithPage() {
           </p>
           {/* <Button
             onClick={scrollToForm}
-            className="rounded-full bg-[#b10dc9] px-8 py-6 text-lg text-white hover:bg-[#9b0baf]"
+            className="rounded-full bg-[#78038a] px-8 py-6 text-lg text-white hover:bg-[#9b0baf]"
           >
             Apply / Nominate Yourself <ArrowRight className="ml-2 h-5 w-5" />
           </Button> */}
@@ -374,8 +374,8 @@ export default function FounderSmithPage() {
                   <div key={step.day} className="relative flex gap-6">
                     <div
                       className={`relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border transition-all duration-500 ease-out ${isActive
-                          ? "border-[#b10dc9] bg-[#b10dc9] scale-110"
-                          : "border-[#b10dc9]/30 bg-[#b10dc9]/10"
+                        ? "border-[#78038a] bg-[#78038a] scale-110"
+                        : "border-[#78038a]/30 bg-[#78038a]/10"
                         }`}
                       style={{
                         boxShadow: isActive
@@ -384,7 +384,7 @@ export default function FounderSmithPage() {
                       }}
                     >
                       <Icon
-                        className={`h-6 w-6 transition-all duration-500 ${isActive ? "text-white scale-110" : "text-[#b10dc9]/60"
+                        className={`h-6 w-6 transition-all duration-500 ${isActive ? "text-white scale-110" : "text-[#78038a]/60"
                           }`}
                         style={{
                           filter: isActive ? `drop-shadow(0 0 5px rgba(255, 255, 255, 0.8))` : 'none'
@@ -392,14 +392,14 @@ export default function FounderSmithPage() {
                       />
                     </div>
                     <div className="pt-2">
-                      <span className={`mb-1 inline-block rounded px-2 py-0.5 text-xs transition-colors duration-500 ${isActive ? "bg-[#b10dc9]/20 text-[#b10dc9]" : "bg-secondary text-muted-foreground"
+                      <span className={`mb-1 inline-block rounded px-2 py-0.5 text-xs transition-colors duration-500 ${isActive ? "bg-[#78038a]/20 text-[#78038a]" : "bg-secondary text-muted-foreground"
                         }`}>
                         {step.day}
                       </span>
                       <h3
                         className={`text-lg font-semibold transition-all duration-500 ${isActive
-                            ? "text-foreground scale-105"
-                            : "text-muted-foreground"
+                          ? "text-foreground scale-105"
+                          : "text-muted-foreground"
                           }`}
                       >
                         {step.title}
@@ -429,10 +429,10 @@ export default function FounderSmithPage() {
               return (
                 <div
                   key={feature.title}
-                  className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-[#b10dc9]/30"
+                  className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-[#78038a]/30"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-[#b10dc9]/30 bg-[#b10dc9]/10">
-                    <Icon className="h-5 w-5 text-[#b10dc9]" />
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-[#78038a]/30 bg-[#78038a]/10">
+                    <Icon className="h-5 w-5 text-[#78038a]" />
                   </div>
                   <h3 className="mb-2 font-semibold">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground">{feature.description}</p>
@@ -456,7 +456,7 @@ export default function FounderSmithPage() {
               <div className="space-y-4">
                 <div>
                   <label className="mb-2 block text-sm text-muted-foreground">
-                    Full Name <span className="text-[#b10dc9]">*</span>
+                    Full Name <span className="text-[#78038a]">*</span>
                   </label>
                   <Input
                     type="text"
@@ -464,13 +464,13 @@ export default function FounderSmithPage() {
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                     required
-                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                   />
                 </div>
 
                 <div>
                   <label className="mb-2 block text-sm text-muted-foreground">
-                    Email Address <span className="text-[#b10dc9]">*</span>
+                    Email Address <span className="text-[#78038a]">*</span>
                   </label>
                   <Input
                     type="email"
@@ -478,13 +478,13 @@ export default function FounderSmithPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                   />
                 </div>
 
                 <div>
                   <label className="mb-2 block text-sm text-muted-foreground">
-                    Mobile Number <span className="text-[#b10dc9]">*</span>
+                    Mobile Number <span className="text-[#78038a]">*</span>
                   </label>
                   <div className="flex">
                     <div className="flex items-center rounded-l-md border border-r-0 border-border bg-background px-3 text-muted-foreground">
@@ -496,14 +496,14 @@ export default function FounderSmithPage() {
                       value={formData.mobileNumber}
                       onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
                       required
-                      className="rounded-l-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                      className="rounded-l-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="mb-2 block text-sm text-muted-foreground">
-                    College / Institution Name <span className="text-[#b10dc9]">*</span>
+                    College / Institution Name <span className="text-[#78038a]">*</span>
                   </label>
                   <Input
                     type="text"
@@ -511,7 +511,7 @@ export default function FounderSmithPage() {
                     value={formData.college}
                     onChange={(e) => setFormData({ ...formData, college: e.target.value })}
                     required
-                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                   />
                 </div>
               </div>
@@ -529,13 +529,13 @@ export default function FounderSmithPage() {
                       onClick={() => setFormData({ ...formData, isSoloFounder: true })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         formData.isSoloFounder
-                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          ? "border-[#78038a] bg-[#78038a]/10 text-foreground"
                           : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          formData.isSoloFounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
+                          formData.isSoloFounder ? "border-[#78038a] bg-[#78038a]" : "border-muted-foreground"
                         }`}
                       />
                       Yes
@@ -545,13 +545,13 @@ export default function FounderSmithPage() {
                       onClick={() => setFormData({ ...formData, isSoloFounder: false })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         !formData.isSoloFounder
-                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          ? "border-[#78038a] bg-[#78038a]/10 text-foreground"
                           : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          !formData.isSoloFounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
+                          !formData.isSoloFounder ? "border-[#78038a] bg-[#78038a]" : "border-muted-foreground"
                         }`}
                       />
                       No
@@ -567,13 +567,13 @@ export default function FounderSmithPage() {
                       onClick={() => setFormData({ ...formData, needsCofounder: true })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         formData.needsCofounder
-                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          ? "border-[#78038a] bg-[#78038a]/10 text-foreground"
                           : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          formData.needsCofounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
+                          formData.needsCofounder ? "border-[#78038a] bg-[#78038a]" : "border-muted-foreground"
                         }`}
                       />
                       Yes
@@ -583,13 +583,13 @@ export default function FounderSmithPage() {
                       onClick={() => setFormData({ ...formData, needsCofounder: false })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         !formData.needsCofounder
-                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          ? "border-[#78038a] bg-[#78038a]/10 text-foreground"
                           : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          !formData.needsCofounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
+                          !formData.needsCofounder ? "border-[#78038a] bg-[#78038a]" : "border-muted-foreground"
                         }`}
                       />
                       No
@@ -613,13 +613,13 @@ export default function FounderSmithPage() {
                         onClick={() => setFormData({ ...formData, ideaType: type })}
                         className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm capitalize transition-colors ${
                           formData.ideaType === type
-                            ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                            ? "border-[#78038a] bg-[#78038a]/10 text-foreground"
                             : "border-border text-muted-foreground hover:border-muted"
                         }`}
                       >
                         <span
                           className={`h-4 w-4 rounded-full border-2 ${
-                            formData.ideaType === type ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
+                            formData.ideaType === type ? "border-[#78038a] bg-[#78038a]" : "border-muted-foreground"
                           }`}
                         />
                         {type === "tech" ? "Tech" : type === "non-tech" ? "Non-Tech" : "Combined"}
@@ -630,13 +630,13 @@ export default function FounderSmithPage() {
 
                 <div>
                   <label className="mb-2 block text-sm text-muted-foreground">
-                    Domain of Your Idea <span className="text-[#b10dc9]">*</span>
+                    Domain of Your Idea <span className="text-[#78038a]">*</span>
                   </label>
                   <Select
                     value={formData.domain}
                     onValueChange={(value) => setFormData({ ...formData, domain: value })}
                   >
-                    <SelectTrigger className="border-border bg-background text-foreground focus:border-[#b10dc9]">
+                    <SelectTrigger className="border-border bg-background text-foreground focus:border-[#78038a]">
                       <SelectValue placeholder="Select domains..." />
                     </SelectTrigger>
                     <SelectContent className="bg-card">
@@ -651,7 +651,7 @@ export default function FounderSmithPage() {
 
                 <div>
                   <label className="mb-2 block text-sm text-muted-foreground">
-                    Tell us briefly about your idea <span className="text-[#b10dc9]">*</span>
+                    Tell us briefly about your idea <span className="text-[#78038a]">*</span>
                   </label>
                   <Textarea
                     placeholder="Describe your idea and the problem you are solving..."
@@ -659,7 +659,7 @@ export default function FounderSmithPage() {
                     onChange={(e) => setFormData({ ...formData, ideaDescription: e.target.value })}
                     required
                     maxLength={500}
-                    className="min-h-32 resize-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                    className="min-h-32 resize-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                   />
                   <p className="mt-1 text-right text-xs text-muted-foreground">{formData.ideaDescription.length}/500</p>
                 </div>
@@ -670,7 +670,7 @@ export default function FounderSmithPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-lg bg-[#b10dc9] py-3 text-white hover:bg-[#9b0baf] disabled:opacity-50"
+                className="w-full rounded-lg bg-[#78038a] py-3 text-white hover:bg-[#9b0baf] disabled:opacity-50"
               >
                 {isSubmitting ? "Submitting..." : "Submit Application"}
               </Button>
@@ -707,7 +707,7 @@ export default function FounderSmithPage() {
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="border-border">
-                <AccordionTrigger className="text-left hover:no-underline hover:text-[#b10dc9]">
+                <AccordionTrigger className="text-left hover:no-underline hover:text-[#78038a]">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
@@ -718,7 +718,7 @@ export default function FounderSmithPage() {
           <div className="mt-12 text-center">
             <p className="text-muted-foreground">
               Still have questions?{" "}
-              <button onClick={scrollToContact} className="font-semibold text-[#b10dc9] hover:underline">
+              <button onClick={scrollToContact} className="font-semibold text-[#78038a] hover:underline">
                 Reach out to us
               </button>
             </p>
@@ -734,7 +734,7 @@ export default function FounderSmithPage() {
           <ul className="space-y-3">
             {terms.map((term, index) => (
               <li key={index} className="flex gap-3">
-                <span className="mt-1 shrink-0 text-[#b10dc9]">•</span>
+                <span className="mt-1 shrink-0 text-[#78038a]">•</span>
                 <span className="text-muted-foreground">{term}</span>
               </li>
             ))}
@@ -749,7 +749,7 @@ export default function FounderSmithPage() {
 
           <div className="rounded-xl border border-border bg-card p-8 space-y-6">
             <div className="flex gap-4">
-              <Mail className="h-6 w-6 shrink-0 text-[#b10dc9]" />
+              <Mail className="h-6 w-6 shrink-0 text-[#78038a]" />
               <div>
                 <h3 className="font-semibold mb-1">Email</h3>
                 <a href="mailto:hello@foundersmith.in" className="text-muted-foreground hover:text-foreground">
@@ -759,7 +759,7 @@ export default function FounderSmithPage() {
             </div>
 
             <div className="flex gap-4">
-              <Phone className="h-6 w-6 shrink-0 text-[#b10dc9]" />
+              <Phone className="h-6 w-6 shrink-0 text-[#78038a]" />
               <div>
                 <h3 className="font-semibold mb-1">Phone</h3>
                 <a href="tel:+919876543210" className="text-muted-foreground hover:text-foreground">
@@ -769,7 +769,7 @@ export default function FounderSmithPage() {
             </div>
 
             <div className="flex gap-4">
-              <MapPin className="h-6 w-6 shrink-0 text-[#b10dc9]" />
+              <MapPin className="h-6 w-6 shrink-0 text-[#78038a]" />
               <div>
                 <h3 className="font-semibold mb-1">Location</h3>
                 <p className="text-muted-foreground">India</p>
@@ -781,18 +781,18 @@ export default function FounderSmithPage() {
               <form className="space-y-3">
                 <Input
                   placeholder="Your name"
-                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                 />
                 <Input
                   type="email"
                   placeholder="Your email"
-                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                 />
                 <Textarea
                   placeholder="Your message"
-                  className="min-h-24 resize-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                  className="min-h-24 resize-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#78038a]"
                 />
-                <Button className="w-full bg-[#b10dc9] text-white hover:bg-[#9b0baf]">Send Message</Button>
+                <Button className="w-full bg-[#78038a] text-white hover:bg-[#9b0baf]">Send Message</Button>
               </form>
             </div>
           </div>
