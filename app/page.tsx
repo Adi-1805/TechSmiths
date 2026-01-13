@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
-  Zap,
   Users,
   Code,
   ClipboardList,
@@ -19,21 +18,21 @@ import {
   Mic,
   TrendingUp,
   ArrowRight,
+  Sun,
+  Moon,
+  Mail,
+  Phone,
+  MapPin,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { cn } from "@/lib/utils"
 
-// Timeline data
+const BRAND_COLOR = "#b10dc9"
+
 const timelineSteps = [
   {
-    day: "Day 0",
-    title: "Co-Founder Matching Ceremony",
-    description: "In-venue matching for solo founders seeking co-founders",
-    icon: Users,
-  },
-  {
     day: "Day 1",
-    title: "Program Initiation",
+    title: "Idea Submission",
     description: "Kickoff briefing and team formation",
     icon: Rocket,
   },
@@ -45,8 +44,8 @@ const timelineSteps = [
   },
   {
     day: "Day 6",
-    title: "User Validation",
-    description: "Test your prototype with real users",
+    title: "Pre-Demo Day",
+    description: "QnA session and test your prototype with live user pole",
     icon: ClipboardList,
   },
   {
@@ -65,7 +64,7 @@ const features = [
     description: "Everything you need to build your prototype fast",
   },
   {
-    icon: Users,
+    icon: TrendingUp,
     title: "Expert Mentorship",
     description: "Guidance from industry veterans and successful founders",
   },
@@ -81,13 +80,13 @@ const features = [
   },
   {
     icon: Trophy,
-    title: "Prize Money",
-    description: "Cash prizes for top 3 performing teams",
+    title: "Certificates & Accolade",
+    description: "Certificates and awards for top 3 performing teams",
   },
   {
-    icon: TrendingUp,
-    title: "Dedicated Pitching",
-    description: "Detailed investor sessions for top 3 teams",
+    icon: Users,
+    title: "Community access",
+    description: "A lifelong community to be accessed of other startups, investors, mentors, resources",
   },
 ]
 
@@ -96,20 +95,15 @@ const faqs = [
   {
     question: "Who can apply to FounderSmith?",
     answer:
-      "Anyone with a startup idea can apply! We welcome students, working professionals, and aspiring entrepreneurs. You can apply as a solo founder or with a team.",
-  },
-  {
-    question: "What if I don't have a co-founder?",
-    answer:
-      "No worries! We have a Co-Founder Matching Ceremony on Day 0 where solo founders can find complementary co-founders based on skills and interests.",
+      "Anyone with an idea can apply! We welcome students, working professionals, and aspiring entrepreneurs. You can apply as a solo founder or with a team.",
   },
   {
     question: "Is there any participation fee?",
     answer:
-      "No, FounderSmith is completely free to participate. We provide all resources, mentorship, and facilities at no cost to selected participants.",
+      "Yes, FounderSmith would ask for a small participation fee. We provide all resources, mentorship, and network access at no cost to the participants.",
   },
   {
-    question: "What kind of ideas are you looking for?",
+    question: "What kind of ideas are we looking for?",
     answer:
       "We're open to all kinds of ideas - tech, non-tech, or combined. We value clarity, innovation, and the potential for impact. Your idea should solve a real problem.",
   },
@@ -121,23 +115,19 @@ const faqs = [
   {
     question: "Can I participate remotely?",
     answer:
-      "FounderSmith is an in-person event to maximize collaboration and networking. Remote participation is not available for this cohort.",
+      "AARAMBH 1.0 is an in-person event to maximize collaboration and networking. Remote participation is not available for this cohort.",
   },
   {
     question: "What's the selection criteria?",
     answer:
       "We evaluate applications based on idea clarity, problem-solution fit, team capability, and commitment level. A diverse cohort is selected to foster cross-pollination of ideas.",
   },
-  {
-    question: "When will I know if I'm selected?",
-    answer:
-      "Selected participants will be notified via email within 2 weeks of the application deadline. Make sure to check your spam folder!",
-  },
 ]
 
 // Terms data
 const terms = [
   "Participant selection is subject to review by the FounderSmith screening committee",
+  "Participant should carry their own laptops to build the MVP",
   "Participation does not guarantee funding or investment",
   "Event schedule and mentors may change based on availability",
   "Teams must follow timelines and program guidelines",
@@ -175,35 +165,74 @@ export default function FounderSmithPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState("")
+  const [isDarkMode, setIsDarkMode] = useState(true)
 
   const [timelineProgress, setTimelineProgress] = useState(0)
   const timelineRef = useRef<HTMLDivElement>(null)
   const timelineContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!timelineRef.current || !timelineContainerRef.current) return
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+    }
+  }, [isDarkMode])
+
+  useEffect(() => {
+    let rafId: number | null = null
+    let ticking = false
+
+    const updateProgress = () => {
+      if (!timelineContainerRef.current) return
 
       const container = timelineContainerRef.current
       const rect = container.getBoundingClientRect()
       const windowHeight = window.innerHeight
 
-      const startPoint = windowHeight * 0.8
-      const endPoint = windowHeight * 0.2
+      // Animation starts when container top reaches 25% of viewport
+      const startTrigger = windowHeight * 0.25
+      // Animation ends when container bottom reaches 75% of viewport
+      const endTrigger = windowHeight * 0.75
 
-      const totalScrollDistance = rect.height + (startPoint - endPoint)
-      const scrolledDistance = startPoint - rect.top
+      const containerTop = rect.top
+      const containerBottom = rect.bottom
+      const containerHeight = containerBottom - containerTop
+
+      // Calculate progress: 0 when container top is at startTrigger, 1 when container bottom is at endTrigger
+      const totalScrollDistance = containerHeight + (startTrigger - endTrigger)
+      const scrolledDistance = startTrigger - containerTop
 
       let progress = scrolledDistance / totalScrollDistance
+      
+      // Clamp progress between 0 and 1
       progress = Math.max(0, Math.min(1, progress))
 
       setTimelineProgress(progress)
+      ticking = false
     }
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll()
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true
+        rafId = requestAnimationFrame(updateProgress)
+      }
+    }
 
-    return () => window.removeEventListener("scroll", handleScroll)
+    // Initial calculation
+    updateProgress()
+
+    // Add scroll and resize listeners
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    window.addEventListener("resize", handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("resize", handleScroll)
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+      }
+    }
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -249,42 +278,56 @@ export default function FounderSmithPage() {
     document.getElementById("nomination-form")?.scrollIntoView({ behavior: "smooth" })
   }
 
+  const scrollToContact = () => {
+    document.getElementById("contact-us")?.scrollIntoView({ behavior: "smooth" })
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f97316]">
-              <Zap className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-semibold">
-              Founder<span className="text-[#f97316]">Smith</span>
-            </span>
-          </div>
+          <a href="/" className="flex items-center gap-2">
+            <img
+              src={isDarkMode ? "/foundersmith-logo-dark.png" : "/foundersmith-logo.png"}
+              alt="FounderSmith"
+              className={cn(
+                "object-contain",
+                isDarkMode ? "h-10" : "h-8"
+              )}
+            />
+            {/* </CHANGE> */}
+          </a>
           <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <Button onClick={scrollToForm} className="rounded-full bg-[#f97316] px-6 text-white hover:bg-[#ea580c]">
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background transition-colors hover:bg-muted"
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
+            {/* <Button onClick={scrollToForm} className="rounded-full bg-[#b10dc9] px-6 text-white hover:bg-[#9b0baf]">
               Apply Now
-            </Button>
+            </Button> */}
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
       <section className="relative overflow-hidden px-6 py-24 text-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#f97316]/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#b10dc9]/10 via-transparent to-transparent" />
         <div className="relative mx-auto max-w-4xl">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#f97316]/30 bg-[#f97316]/10 px-4 py-2 text-sm text-[#f97316]">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-[#f97316]" />
-            Applications Open
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#b10dc9]/30 bg-[#b10dc9]/10 px-4 py-2 text-sm text-[#b10dc9]">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-[#b10dc9]" />
+            Coming Soon
           </div>
-          <h1 className="mb-6 text-4xl font-bold leading-tight md:text-6xl">
+          <h1 className="mb-4 text-5xl font-bold leading-tight text-[#b10dc9] md:text-7xl">Aarambh 1.0</h1>
+          <h2 className="mb-4 text-2xl font-semibold leading-tight md:text-3xl">
             {"India's First "}
-            <span className="text-[#f97316]">Execution-Based</span>
+            <span className="text-[#b10dc9]">Execution-Based</span>
             {" Startup Event"}
-          </h1>
-          <p className="mb-2 text-lg text-muted-foreground md:text-xl">
+          </h2>
+          <p className="mb-2 text-base text-muted-foreground">
             {"Let's take your idea to a "}
             <span className="font-semibold text-foreground">working prototype</span>
             {" within 7 days"}
@@ -292,37 +335,12 @@ export default function FounderSmithPage() {
           <p className="mb-8 text-sm text-muted-foreground">
             Turn ideas into validated prototypes with mentorship, resources, and investor access.
           </p>
-          <Button
+          {/* <Button
             onClick={scrollToForm}
-            className="rounded-full bg-[#f97316] px-8 py-6 text-lg text-white hover:bg-[#ea580c]"
+            className="rounded-full bg-[#b10dc9] px-8 py-6 text-lg text-white hover:bg-[#9b0baf]"
           >
             Apply / Nominate Yourself <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </div>
-
-        {/* Stats */}
-        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-8 border-t border-[#333] pt-12">
-          <div className="flex flex-col items-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-[#f97316]/30 bg-[#f97316]/10">
-              <Rocket className="h-6 w-6 text-[#f97316]" />
-            </div>
-            <span className="text-3xl font-bold">7</span>
-            <span className="text-sm text-gray-400">Days to MVP</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-[#f97316]/30 bg-[#f97316]/10">
-              <Users className="h-6 w-6 text-[#f97316]" />
-            </div>
-            <span className="text-3xl font-bold">50+</span>
-            <span className="text-sm text-gray-400">Expert Mentors</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-[#f97316]/30 bg-[#f97316]/10">
-              <Trophy className="h-6 w-6 text-[#f97316]" />
-            </div>
-            <span className="text-3xl font-bold">₹5L+</span>
-            <span className="text-sm text-gray-400">Prize Pool</span>
-          </div>
+          </Button> */}
         </div>
       </section>
 
@@ -330,16 +348,18 @@ export default function FounderSmithPage() {
       <section className="px-6 py-20">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-4 text-center text-3xl font-bold md:text-4xl">7-Day Execution Program</h2>
-          <p className="mb-16 text-center text-muted-foreground">A structured journey from idea to validated prototype</p>
+          <p className="mb-16 text-center text-muted-foreground">
+            A structured journey from idea to validated prototype
+          </p>
 
           <div className="relative" ref={timelineContainerRef}>
-            {/* Vertical line */}
+            {/* Vertical line - static background */}
             <div className="absolute left-[27px] top-0 h-full w-0.5 bg-border md:left-[31px]" />
 
-            {/* Animated progress line */}
+            {/* Progress bar - hidden but still used for calculations */}
             <div
               ref={timelineRef}
-              className="absolute left-[27px] top-0 w-0.5 bg-[#f97316] transition-all duration-100 ease-out md:left-[31px]"
+              className="absolute left-[27px] top-0 w-0.5 opacity-0 pointer-events-none md:left-[31px]"
               style={{ height: `${timelineProgress * 100}%` }}
             />
 
@@ -347,32 +367,78 @@ export default function FounderSmithPage() {
               {timelineSteps.map((step, index) => {
                 const Icon = step.icon
                 const isLast = index === timelineSteps.length - 1
-                const stepProgress = (index + 1) / timelineSteps.length
-                const isActive = timelineProgress >= stepProgress - 0.1
+                const stepProgress = index / (timelineSteps.length - 1)
+                const nextStepProgress = isLast ? 1 : (index + 1) / (timelineSteps.length - 1)
+                
+                // Calculate glow intensity based on scroll progress
+                // Only the current step being scrolled through should glow
+                const isCurrent = isLast 
+                  ? timelineProgress >= stepProgress && timelineProgress <= 1
+                  : timelineProgress >= stepProgress && timelineProgress < nextStepProgress
+                
+                // Calculate glow intensity (0 to 1) for smooth transitions
+                let glowIntensity = 0
+                if (isCurrent) {
+                  // When scrolling through this step, glow intensity increases smoothly
+                  const stepRange = nextStepProgress - stepProgress
+                  if (stepRange > 0) {
+                    const progressInStep = (timelineProgress - stepProgress) / stepRange
+                    // Smooth glow that reaches full intensity
+                    glowIntensity = Math.min(1, Math.max(0, progressInStep * 1.2))
+                  } else if (isLast) {
+                    // For the last step, glow when progress reaches it
+                    glowIntensity = timelineProgress >= stepProgress ? 1 : 0
+                  }
+                }
 
                 return (
                   <div key={step.day} className="relative flex gap-6">
                     <div
-                      className={`relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border transition-all duration-300 ${
-                        isActive || isLast
-                          ? "border-[#f97316] bg-[#f97316] shadow-lg shadow-[#f97316]/30"
-                          : "border-[#f97316]/30 bg-[#f97316]/10"
+                      className={`relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border transition-all duration-500 ease-out ${
+                        glowIntensity > 0.3
+                          ? "border-[#b10dc9] bg-[#b10dc9] scale-110"
+                          : glowIntensity > 0
+                          ? "border-[#b10dc9] bg-[#b10dc9]/60 scale-105"
+                          : "border-[#b10dc9]/30 bg-[#b10dc9]/10"
                       }`}
+                      style={{
+                        boxShadow: glowIntensity > 0
+                          ? `0 0 ${15 + glowIntensity * 35}px rgba(177, 13, 201, ${0.5 + glowIntensity * 0.5}), 0 0 ${8 + glowIntensity * 25}px rgba(177, 13, 201, ${0.7 + glowIntensity * 0.3}), 0 0 ${4 + glowIntensity * 12}px rgba(177, 13, 201, 0.9)`
+                          : 'none',
+                        transition: 'all 0.5s ease-out'
+                      }}
                     >
                       <Icon
-                        className={`h-6 w-6 transition-colors duration-300 ${isActive || isLast ? "text-white" : "text-[#f97316]"}`}
+                        className={`h-6 w-6 transition-all duration-500 ${
+                          glowIntensity > 0.3 ? "text-white scale-110" : glowIntensity > 0 ? "text-white" : "text-[#b10dc9]/60"
+                        }`}
+                        style={{
+                          filter: glowIntensity > 0 ? `drop-shadow(0 0 ${3 + glowIntensity * 8}px rgba(255, 255, 255, ${0.6 + glowIntensity * 0.4}))` : 'none'
+                        }}
                       />
                     </div>
                     <div className="pt-2">
-                      <span className="mb-1 inline-block rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                      <span className={`mb-1 inline-block rounded px-2 py-0.5 text-xs transition-colors duration-500 ${
+                        glowIntensity > 0.3 ? "bg-[#b10dc9]/20 text-[#b10dc9]" : "bg-secondary text-muted-foreground"
+                      }`}>
                         {step.day}
                       </span>
                       <h3
-                        className={`text-lg font-semibold transition-colors duration-300 ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+                        className={`text-lg font-semibold transition-all duration-500 ${
+                          glowIntensity > 0.3
+                            ? "text-foreground scale-105" 
+                            : glowIntensity > 0
+                            ? "text-foreground" 
+                            : "text-muted-foreground"
+                        }`}
                       >
                         {step.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                      <p className={`text-sm transition-colors duration-500 ${
+                        glowIntensity > 0.3 ? "text-foreground/80" : "text-muted-foreground"
+                      }`}>
+                        {step.description}
+                      </p>
                     </div>
                   </div>
                 )
@@ -394,10 +460,10 @@ export default function FounderSmithPage() {
               return (
                 <div
                   key={feature.title}
-                  className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-[#f97316]/30"
+                  className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-[#b10dc9]/30"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-[#f97316]/30 bg-[#f97316]/10">
-                    <Icon className="h-5 w-5 text-[#f97316]" />
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-[#b10dc9]/30 bg-[#b10dc9]/10">
+                    <Icon className="h-5 w-5 text-[#b10dc9]" />
                   </div>
                   <h3 className="mb-2 font-semibold">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground">{feature.description}</p>
@@ -409,20 +475,19 @@ export default function FounderSmithPage() {
       </section>
 
       {/* Nomination Form Section */}
-      <section id="nomination-form" className="px-6 py-20">
+      {/* <section id="nomination-form" className="px-6 py-20">
         <div className="mx-auto max-w-2xl">
           <h2 className="mb-4 text-center text-3xl font-bold md:text-4xl">Nomination Form</h2>
-          <p className="mb-12 text-center text-muted-foreground">Fill in your details to apply for FounderSmith 2024</p>
+          <p className="mb-12 text-center text-muted-foreground">Fill in your details to apply for FounderSmith 2026</p>
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Personal Details */}
             <div className="rounded-xl border border-border bg-card p-6">
               <h3 className="mb-6 text-lg font-semibold">Personal Details</h3>
 
               <div className="space-y-4">
                 <div>
-                  <label className="mb-2 block text-sm text-foreground">
-                    Full Name <span className="text-[#f97316]">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    Full Name <span className="text-[#b10dc9]">*</span>
                   </label>
                   <Input
                     type="text"
@@ -430,13 +495,13 @@ export default function FounderSmithPage() {
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                     required
-                    className="focus:border-[#f97316]"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm text-foreground">
-                    Email Address <span className="text-[#f97316]">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    Email Address <span className="text-[#b10dc9]">*</span>
                   </label>
                   <Input
                     type="email"
@@ -444,16 +509,16 @@ export default function FounderSmithPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="focus:border-[#f97316]"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm text-foreground">
-                    Mobile Number <span className="text-[#f97316]">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    Mobile Number <span className="text-[#b10dc9]">*</span>
                   </label>
                   <div className="flex">
-                    <div className="flex items-center rounded-l-md border border-r-0 border-input bg-background px-3 text-muted-foreground">
+                    <div className="flex items-center rounded-l-md border border-r-0 border-border bg-background px-3 text-muted-foreground">
                       +91
                     </div>
                     <Input
@@ -462,14 +527,14 @@ export default function FounderSmithPage() {
                       value={formData.mobileNumber}
                       onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
                       required
-                      className="rounded-l-none focus:border-[#f97316]"
+                      className="rounded-l-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm text-foreground">
-                    College / Institution Name <span className="text-[#f97316]">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    College / Institution Name <span className="text-[#b10dc9]">*</span>
                   </label>
                   <Input
                     type="text"
@@ -477,32 +542,31 @@ export default function FounderSmithPage() {
                     value={formData.college}
                     onChange={(e) => setFormData({ ...formData, college: e.target.value })}
                     required
-                    className="focus:border-[#f97316]"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Founder Status */}
             <div className="rounded-xl border border-border bg-card p-6">
               <h3 className="mb-6 text-lg font-semibold">Founder Status</h3>
 
               <div className="space-y-6">
                 <div>
-                  <label className="mb-3 block text-sm text-foreground">Are you a Solo Founder?</label>
+                  <label className="mb-3 block text-sm text-muted-foreground">Are you a Solo Founder?</label>
                   <div className="flex gap-3">
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, isSoloFounder: true })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         formData.isSoloFounder
-                          ? "border-[#f97316] bg-[#f97316]/10 text-foreground"
-                          : "border-border text-muted-foreground hover:border-border/80"
+                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          formData.isSoloFounder ? "border-[#f97316] bg-[#f97316]" : "border-gray-500"
+                          formData.isSoloFounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
                         }`}
                       />
                       Yes
@@ -512,13 +576,13 @@ export default function FounderSmithPage() {
                       onClick={() => setFormData({ ...formData, isSoloFounder: false })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         !formData.isSoloFounder
-                          ? "border-[#f97316] bg-[#f97316]/10 text-white"
-                          : "border-[#333] text-gray-400 hover:border-[#444]"
+                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          !formData.isSoloFounder ? "border-[#f97316] bg-[#f97316]" : "border-gray-500"
+                          !formData.isSoloFounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
                         }`}
                       />
                       No
@@ -527,20 +591,20 @@ export default function FounderSmithPage() {
                 </div>
 
                 <div>
-                  <label className="mb-3 block text-sm text-foreground">Do you need a Co-Founder?</label>
+                  <label className="mb-3 block text-sm text-muted-foreground">Do you need a Co-Founder?</label>
                   <div className="flex gap-3">
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, needsCofounder: true })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         formData.needsCofounder
-                          ? "border-[#f97316] bg-[#f97316]/10 text-white"
-                          : "border-[#333] text-gray-400 hover:border-[#444]"
+                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          formData.needsCofounder ? "border-[#f97316] bg-[#f97316]" : "border-gray-500"
+                          formData.needsCofounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
                         }`}
                       />
                       Yes
@@ -550,13 +614,13 @@ export default function FounderSmithPage() {
                       onClick={() => setFormData({ ...formData, needsCofounder: false })}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm transition-colors ${
                         !formData.needsCofounder
-                          ? "border-[#f97316] bg-[#f97316]/10 text-white"
-                          : "border-[#333] text-gray-400 hover:border-[#444]"
+                          ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                          : "border-border text-muted-foreground hover:border-muted"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          !formData.needsCofounder ? "border-[#f97316] bg-[#f97316]" : "border-gray-500"
+                          !formData.needsCofounder ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
                         }`}
                       />
                       No
@@ -566,14 +630,13 @@ export default function FounderSmithPage() {
               </div>
             </div>
 
-            {/* Idea Details */}
             <div className="rounded-xl border border-border bg-card p-6">
               <h3 className="mb-6 text-lg font-semibold">Idea Details</h3>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="mb-3 block text-sm text-foreground">Your Idea Is In</label>
-                  <div className="flex flex-wrap gap-3">
+                  <label className="mb-3 block text-sm text-muted-foreground">Your Idea is In</label>
+                  <div className="flex gap-3">
                     {["tech", "non-tech", "combined"].map((type) => (
                       <button
                         key={type}
@@ -581,33 +644,33 @@ export default function FounderSmithPage() {
                         onClick={() => setFormData({ ...formData, ideaType: type })}
                         className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm capitalize transition-colors ${
                           formData.ideaType === type
-                            ? "border-[#f97316] bg-[#f97316]/10 text-foreground"
-                            : "border-border text-muted-foreground hover:border-border/80"
+                            ? "border-[#b10dc9] bg-[#b10dc9]/10 text-foreground"
+                            : "border-border text-muted-foreground hover:border-muted"
                         }`}
                       >
                         <span
                           className={`h-4 w-4 rounded-full border-2 ${
-                            formData.ideaType === type ? "border-[#f97316] bg-[#f97316]" : "border-gray-500"
+                            formData.ideaType === type ? "border-[#b10dc9] bg-[#b10dc9]" : "border-muted-foreground"
                           }`}
                         />
-                        {type === "non-tech" ? "Non-Tech" : type.charAt(0).toUpperCase() + type.slice(1)}
+                        {type === "tech" ? "Tech" : type === "non-tech" ? "Non-Tech" : "Combined"}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm text-foreground">
-                    Domain of Your Idea <span className="text-[#f97316]">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    Domain of Your Idea <span className="text-[#b10dc9]">*</span>
                   </label>
                   <Select
                     value={formData.domain}
                     onValueChange={(value) => setFormData({ ...formData, domain: value })}
                   >
-                    <SelectTrigger className="focus:ring-[#f97316]">
+                    <SelectTrigger className="border-border bg-background text-foreground focus:border-[#b10dc9]">
                       <SelectValue placeholder="Select domains..." />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-card">
                       {domains.map((domain) => (
                         <SelectItem key={domain} value={domain}>
                           {domain}
@@ -618,8 +681,8 @@ export default function FounderSmithPage() {
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm text-foreground">
-                    Tell us briefly about your idea <span className="text-[#f97316]">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    Tell us briefly about your idea <span className="text-[#b10dc9]">*</span>
                   </label>
                   <Textarea
                     placeholder="Describe your idea and the problem you are solving..."
@@ -627,100 +690,149 @@ export default function FounderSmithPage() {
                     onChange={(e) => setFormData({ ...formData, ideaDescription: e.target.value })}
                     required
                     maxLength={500}
-                    rows={5}
-                    className="resize-none focus:border-[#f97316]"
+                    className="min-h-32 resize-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
                   />
-                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Clarity matters more than complexity</span>
-                    <span>{formData.ideaDescription.length}/500</span>
-                  </div>
+                  <p className="mt-1 text-right text-xs text-muted-foreground">{formData.ideaDescription.length}/500</p>
                 </div>
               </div>
             </div>
 
-            {/* Submit */}
-            <div className="text-center">
+            <div className="flex flex-col gap-3">
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full max-w-xs rounded-full bg-[#f97316] py-6 text-lg text-white hover:bg-[#ea580c] disabled:opacity-50"
+                className="w-full rounded-lg bg-[#b10dc9] py-3 text-white hover:bg-[#9b0baf] disabled:opacity-50"
               >
                 {isSubmitting ? "Submitting..." : "Submit Application"}
               </Button>
               {submitMessage && (
                 <p
-                  className={`mt-4 text-sm ${
-                    submitMessage.includes("successfully") ? "text-green-500" : "text-red-500"
+                  className={`text-center text-sm ${
+                    submitMessage.includes("successfully") ? "text-green-600" : "text-red-600"
                   }`}
                 >
                   {submitMessage}
                 </p>
               )}
-              <p className="mt-4 text-sm text-muted-foreground">Shortlisted participants will be contacted via email</p>
+              <p className="text-center text-xs text-muted-foreground">
+                Shortlisted participants will be contacted via email
+              </p>
             </div>
           </form>
         </div>
-      </section>
+      </section> */}
 
       {/* FAQ Section */}
       <section className="px-6 py-20">
-        <div className="mx-auto max-w-2xl">
-          <p className="mb-2 text-center text-sm font-medium uppercase tracking-wider text-[#f97316]">Got Questions?</p>
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-4 text-center">
+            <span className="mb-2 inline-block rounded bg-secondary px-3 py-1 text-xs font-semibold uppercase text-muted-foreground">
+              Got Questions?
+            </span>
+          </div>
           <h2 className="mb-4 text-center text-3xl font-bold md:text-4xl">Frequently Asked Questions</h2>
           <p className="mb-12 text-center text-muted-foreground">
             Everything you need to know about FounderSmith and the application process
           </p>
 
-          <Accordion type="single" collapsible className="space-y-3">
+          <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
-              <AccordionItem
-                key={index}
-                value={`item-${index}`}
-                className="rounded-xl border border-border bg-card px-6"
-              >
-                <AccordionTrigger className="py-4 text-left text-[15px] font-medium hover:no-underline [&[data-state=open]]:text-[#f97316]">
+              <AccordionItem key={index} value={`item-${index}`} className="border-border">
+                <AccordionTrigger className="text-left hover:no-underline hover:text-[#b10dc9]">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="pb-4 text-sm text-muted-foreground">{faq.answer}</AccordionContent>
+                <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
 
-          <p className="mt-8 text-center text-muted-foreground">
-            Still have questions?{" "}
-            <a href="#" className="text-[#f97316] hover:underline">
-              Reach out to us
-            </a>
-          </p>
+          <div className="mt-12 text-center">
+            <p className="text-muted-foreground">
+              Still have questions?{" "}
+              <button onClick={scrollToContact} className="font-semibold text-[#b10dc9] hover:underline">
+                Reach out to us
+              </button>
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Terms & Conditions */}
-      <section className="px-6 py-16">
+      {/* Terms & Conditions Section */}
+      <section className="px-6 py-20">
         <div className="mx-auto max-w-3xl">
-          <h2 className="mb-6 text-xl font-bold">Terms & Conditions</h2>
-          <ul className="space-y-2">
+          <h2 className="mb-8 text-center text-3xl font-bold md:text-4xl">Terms & Conditions</h2>
+
+          <ul className="space-y-3">
             {terms.map((term, index) => (
-              <li key={index} className="flex items-start gap-3 text-sm text-muted-foreground">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f97316]" />
-                {term}
+              <li key={index} className="flex gap-3">
+                <span className="mt-1 shrink-0 text-[#b10dc9]">•</span>
+                <span className="text-muted-foreground">{term}</span>
               </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border px-6 py-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f97316]">
-              <Zap className="h-4 w-4 text-white" />
+      {/* Contact Us Section */}
+      <section id="contact-us" className="px-6 py-20">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="mb-8 text-center text-3xl font-bold md:text-4xl">Contact Us</h2>
+
+          <div className="rounded-xl border border-border bg-card p-8 space-y-6">
+            <div className="flex gap-4">
+              <Mail className="h-6 w-6 shrink-0 text-[#b10dc9]" />
+              <div>
+                <h3 className="font-semibold mb-1">Email</h3>
+                <a href="mailto:hello@foundersmith.in" className="text-muted-foreground hover:text-foreground">
+                    business@foundersmith.in
+                </a>
+              </div>
             </div>
-            <span className="text-lg font-semibold">
-              Founder<span className="text-[#f97316]">Smith</span>
-            </span>
+
+            <div className="flex gap-4">
+              <Phone className="h-6 w-6 shrink-0 text-[#b10dc9]" />
+              <div>
+                <h3 className="font-semibold mb-1">Phone</h3>
+                <a href="tel:+919876543210" className="text-muted-foreground hover:text-foreground">
+                    +91 8017421072 / +91 7060593172
+                </a>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <MapPin className="h-6 w-6 shrink-0 text-[#b10dc9]" />
+              <div>
+                <h3 className="font-semibold mb-1">Location</h3>
+                <p className="text-muted-foreground">India</p>
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-6">
+              <h3 className="font-semibold mb-4">Send us a Message</h3>
+              <form className="space-y-3">
+                <Input
+                  placeholder="Your name"
+                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                />
+                <Input
+                  type="email"
+                  placeholder="Your email"
+                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                />
+                <Textarea
+                  placeholder="Your message"
+                  className="min-h-24 resize-none border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-[#b10dc9]"
+                />
+                <Button className="w-full bg-[#b10dc9] text-white hover:bg-[#9b0baf]">Send Message</Button>
+              </form>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-card px-6 py-8">
+        <div className="mx-auto max-w-7xl text-center">
           <p className="text-sm text-muted-foreground">© 2026 FounderSmith. All rights reserved.</p>
         </div>
       </footer>
