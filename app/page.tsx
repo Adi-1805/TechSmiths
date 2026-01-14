@@ -778,7 +778,7 @@ export default function FounderSmithPage() {
               </div>
             </div>
 
-            <div className="border-t border-border pt-6">
+            {/* <div className="border-t border-border pt-6">
               <h3 className="font-semibold mb-4">Send us a Message</h3>
               <form className="space-y-3">
                 <Input
@@ -796,7 +796,7 @@ export default function FounderSmithPage() {
                 />
                 <Button className="w-full bg-[#78038a] text-white hover:bg-[#9b0baf]">Send Message</Button>
               </form>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
