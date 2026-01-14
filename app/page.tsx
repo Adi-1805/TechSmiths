@@ -45,7 +45,7 @@ const timelineSteps = [
   {
     day: "Day 6",
     title: "Pre-Demo Day",
-    description: "QnA session and test your prototype with live user pole",
+    description: "QnA session and prototype testing with live user poll",
     icon: ClipboardList,
   },
   {
