@@ -8,7 +8,7 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
 export const metadata: Metadata = {
-  title: 'TechSmith',
+  title: 'FounderSmith',
   description: 'Created by Aditi',
   generator: 'github/Adi-1805',
   icons: {
